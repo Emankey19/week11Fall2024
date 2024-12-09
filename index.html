@@ -1,0 +1,64 @@
+<head>
+    <style>
+        h1 {
+            color: purple;
+        }
+
+        #username {
+            color: darkgreen;
+        }
+
+        .big {
+            font-size: 2rem;
+        }
+
+        body {
+            background-color: darkgrey;
+        }
+
+        .outcome {
+            color: lightgreen;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Register</h1>
+    <div>
+        <input type="text" id="username" placeholder="User Name">
+        <span class="outcome">GOOD</span>
+    </div>
+    <button id="signup" class="big">Sign-Up</button>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const base_service = "http://localhost:8083/api" //endpoint base url 
+            const e = document.getElementById("username"); //not a selector
+            e.addEventListener("keyup", async () => {
+                //WHAT METHOD IS BEING USED IN THIS FETCH CALL? GET!!! is the default.
+                const endpoint = base_service + "/username_available/";
+                const r = await fetch(endpoint + e.value);
+
+                const SUCCESS_200 = 200;
+                const NOT_FOUND_404 = 404;
+                const outcome = document.querySelector(".outcome");
+
+                if (r.status === SUCCESS_200) {
+                    const data = await r.json();
+                    if(data.available){ //already a boolean
+                        outcome.innerText = "GOOD";
+                        outcome.style.color = "green";
+                    }else{
+                        outcome.innerText = "BAD";
+                        outcome.style.color = "red";
+                    }
+                } else if(r.status === NOT_FOUND_404){
+                    outcome.innerText = "BAD";
+                    outcome.style.color = "red";
+                }else{ //OTHER RESPONSE CODE
+                    outcome.innerText = r.status;
+                    outcome.style.color = "darkgoldenrod";
+                }
+            });
+        });//end load
+    </script>
+</body>
