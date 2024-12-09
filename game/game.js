@@ -30,10 +30,18 @@ class Fighter {
                 DEX:${this.attrList[1].value}
         `;
     }
+    getValue(attrName) {
+        const a = this.attrList.find(a => a.name.toLowerCase() === attrName.toLowerCase())
+        return a ? a.value : 0;
+    }
+    setValue(attrName, value) {
+        const a = this.attrList.find(a => a.name.toLowerCase() === attrName.toLowerCase())
+        a.value = value;
+    }
     attack(who) {
-        const myStr = this.attrList[0].value;
-        const myDex = this.attrList[1].value;
-        const theirDex = who.attrList[1].value;
+        const myStr = this.getValue("strength");
+        const myDex = this.getValue("dexterity");
+        const theirDex = who.getValue("dexterity");
         const chanceOfSuccess = (50 + (myDex - theirDex)) / 100;
         if (Math.random() >= chanceOfSuccess) {
             const damage = Math.ceil(myStr * Math.random());
@@ -43,12 +51,19 @@ class Fighter {
         return this.name + " missed " + who.name + " doing no damage.";
     }
 }
+class Hero extends Fighter{
+    constructor(name){
+        super(name);
+        //give hero advantages (3?)
+        this.health = 200;
+        this.setValue("strength", 75);
+        this.setValue("dexterity", 75);
+    }
+}
+
 class FightingGame {
-    constructor() {
-        this.fighters = [
-            new Fighter("hero"),   // 0
-            new Fighter("villian") // 1
-        ];
+    constructor(fighters) {
+        this.fighters = fighters;
     }
     status() {
         return this.fighters.map(f => f.status()).join("\n-----")
@@ -73,8 +88,12 @@ class FightingGame {
         return output.join("\n");
     }
 }
-fg = new FightingGame();
-console.log(fg.status());
-console.log(fg.fight(fg.fighters[0], fg.fighters[1]));
-console.log(fg.status());
+//TEST
+// const hero = new Hero("hero");
+// const villian = new Fighter("villian")
+
+// const fg = new FightingGame([hero, villian]);
+// console.log(fg.status());
+// console.log(fg.fight(hero, villian));
+// console.log(fg.status());
 
