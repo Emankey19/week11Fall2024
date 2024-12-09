@@ -22,13 +22,25 @@ class Fighter {
             new Attr("dexterity"),
         ];
     }
-    status(){
+    status() {
         return `
                 NAME: ${this.name} 
                 HEALTH: ${this.health} 
                 STR:${this.attrList[0].value}
                 DEX:${this.attrList[1].value}
         `;
+    }
+    attack(who) {
+        const myStr = this.attrList[0].value;
+        const myDex = this.attrList[1].value;
+        const theirDex = who.attrList[1].value;
+        const chanceOfSuccess = (50 + (myDex - theirDex)) / 100;
+        if (Math.random() >= chanceOfSuccess) {
+            const damage = Math.ceil(myStr * Math.random());
+            who.health -= damage;
+            return this.name + " hit " + who.name + " for " + damage + " points.";
+        }
+        return this.name + " missed " + who.name + " doing no damage.";
     }
 }
 class FightingGame {
@@ -38,10 +50,31 @@ class FightingGame {
             new Fighter("villian") // 1
         ];
     }
-    status(){
-        return this.fighters
+    status() {
+        return this.fighters.map(f => f.status()).join("\n-----")
+    }
+    fight(a, b) {
+        const output = [];
+        let victor = {};
+        output.push("FIGHT " + a.name + " vs " + b.name);
+        victor = new Fighter("no one");
+        //TODO fight while both are alive
+        while (a.health > 0 && b.health > 0) {
+            output.push(a.attack(b));
+            output.push(b.attack(a));
+        }
+        if (a.health > 0) {
+            victor = a;
+        }
+        if (b.health > 0) {
+            victor = b;
+        }
+        output.push("FINISH " + victor.name + " WINS!!!");
+        return output.join("\n");
     }
 }
-fg = FightingGame();
+fg = new FightingGame();
+console.log(fg.status());
+console.log(fg.fight(fg.fighters[0], fg.fighters[1]));
 console.log(fg.status());
 
