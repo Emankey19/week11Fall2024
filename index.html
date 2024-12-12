@@ -58,7 +58,7 @@
                 const endpoint = base_service + "/username_available/";
 
                 try{
-                    const r = await fetch(endpoint + e.value);
+                    const r = await fetch(endpoint + e.value); // method is GET
 
                     if (r.status === SUCCESS_200) {
                         const data = await r.json();
@@ -81,7 +81,7 @@
                 window.location.href = "welcome.html";
                 const obj = { username: e.value };
                 localStorage.user = JSON.stringify(obj); // conver binary object to text string
-                // window.location.href = "welcome.html?username=" + e.value;
+                window.location.href = "welcome.html?username=" + e.value;
             });
         });//end load
     </script>
